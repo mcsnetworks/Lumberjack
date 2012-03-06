@@ -30,11 +30,12 @@ public class Plugin extends JavaPlugin {
 		
 		PluginDescriptionFile d = getDescription();
 		Plugin.name = d.getName();
-		Plugin.version = new LumberjackVersion(d.getVersion());
+		// Plugin.version = new LumberjackVersion(d.getVersion());
 		
 		PluginMessage.initialize(Plugin.name);
-		PluginMessage.send("version " + Plugin.version + " enabled!");
+		//PluginMessage.send("version " + Plugin.version + " enabled!");
 		
+		PluginMessage.send(Plugin.name + " enabled!");
 		manager = this.getServer().getPluginManager();
 		
 		// manager.registerEvent(Event.Type.BLOCK_BREAK, OnPlayerHit.instance, Event.Priority.Normal, this);
