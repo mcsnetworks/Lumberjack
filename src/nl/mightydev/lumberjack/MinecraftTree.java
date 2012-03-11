@@ -81,7 +81,7 @@ public class MinecraftTree {
 	}
 	
 	private void completeTree(Block source) {
-		int type_id = source.getData() & 3;
+		int type_id = source.getData() & 4;  // was 3
 		switch(type_id) {
 		case 0:
 			type = "oak";
@@ -94,6 +94,10 @@ public class MinecraftTree {
 		case 2:
 			type = "birch";
 			completeBirchTree(source);
+			break;
+		case 3: // Added Jungle
+			type = "jungle";
+			completeJungleTree(source);
 			break;
 		}
 		
@@ -126,6 +130,11 @@ public class MinecraftTree {
 		}
 	}
 	
+	private void completeJungleTree(Block source) {
+		// TODO Auto-generated method stub
+		completeJungleTree(source);
+	}
+
 	private void completeOakTree(Block source) {
 		if(!natural) return;
 		
