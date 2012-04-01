@@ -1,5 +1,7 @@
 package nl.mightydev.lumberjack;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import nl.mightydev.lumberjack.player_data.PlayerData;
@@ -110,8 +112,9 @@ public class OnPlayerHit implements Listener {
 		return true; // cancel the breaking of the current block
 	}
 	
+	
 	private boolean fakeBlockBreak(Block block, Player player) {
-
+	 
 		BlockBreakEvent break_event = new LumberjackBlockBreakEvent(block, player);
 		Plugin.manager.callEvent(break_event);
 		if(break_event.isCancelled()) return false;
@@ -123,13 +126,13 @@ public class OnPlayerHit implements Listener {
 		//Message.send(player, "new dur: " + dur); // TODO: remove need to break item when dur = ???
 
 		// artificial item drop
-		Material material = block.getType();
-		int amount = 1;
-		byte data = block.getData();
-		short damage = 0;
-		ItemStack drop = new ItemStack(material, amount, damage, data);
-		block.getWorld().dropItemNaturally(block.getLocation(), drop);
-		
+	      Material material = block.getType();
+	      int amount = 1;
+	      byte data = block.getData();
+	      short damage = 0;
+	      ItemStack drop = new ItemStack(material, amount, damage, data);
+	      block.getWorld().dropItemNaturally(block.getLocation(), drop);
+	      
 		// destroy highest block
 		block.setData((byte)0);
 		block.setType(Material.AIR);
