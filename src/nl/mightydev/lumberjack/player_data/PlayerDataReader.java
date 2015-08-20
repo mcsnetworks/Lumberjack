@@ -40,9 +40,9 @@ class PlayerDataReader {
 			
 			LumberjackVersion version = new LumberjackVersion(parts[1]);
 			
-			if(!version.equals(Plugin.version)) {
-				PluginMessage.send("waring: converting from and old player settings file");
-			}
+			//if(!version.equals(Plugin.version)) {
+			//	PluginMessage.send("waring: converting from and old player settings file");
+			//}
 			
 			while((line = getLine(scanner)) != null) {
 				read(map, line);

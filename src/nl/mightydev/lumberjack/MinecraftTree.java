@@ -82,6 +82,7 @@ public class MinecraftTree {
 	
 	private void completeTree(Block source) {
 		int type_id = source.getData() & 4;  // was 3
+		System.out.println("Type of CompleteTree: " + type_id);
 		switch(type_id) {
 		case 0:
 			type = "oak";
@@ -100,14 +101,14 @@ public class MinecraftTree {
 			completeJungleTree(source);
 			break;
 		}
-		
+
 		if(natural == false) return;
-		
+
 		if(leaves.size() < 4) {
 			natural = false;
 			return;
 		}
-		
+
 		Block base = getTrunkBase();
 		Block top = getTrunkTop();
 		Block ground = null;
@@ -117,32 +118,31 @@ public class MinecraftTree {
 			
 			ground = base.getWorld().getBlockAt(base.getX(), base.getY() - 1, base.getZ());
 		}
-		
+
 		Block lowest_leaf = getLowestLeaf();
-		
+
 		if(lowest_leaf != null) {
 			leaf_height = lowest_leaf.getY() - base.getY();
 		}
-		
-		if(ground != null && ground.getType() != Material.DIRT) {
-			natural = false;
+
+		if(ground != null && !isGround(ground)) {
+			System.out.println("Ground: " + ground.getType());
+		    natural = false;
 			return;
-		}
+		}		
 	}
 	
 	private void completeJungleTree(Block source) {
-		// TODO Auto-generated method stub
 		completeJungleTree(source);
 	}
 
 	private void completeOakTree(Block source) {
 		if(!natural) return;
-		
-		if(source.getType() == Material.LEAVES && !leaves.contains(source)) {
+
+		if(isLeaves(source) && !leaves.contains(source)) {
 			leaves.add(source);
-			natural = isNaturalLeaf(source);
-		}
-		else if(source.getType() == Material.LOG && !trunk.contains(source)) {
+			natural = isNaturalLeaf(source);		
+		} else if(isLog(source) && !trunk.contains(source)) {
 			trunk.add(source);
 			List<Block> adjacent = getDiagonallyAdjacentBlocks(source);
 			for(Block b : adjacent) completeOakTree(b);
@@ -250,6 +250,38 @@ public class MinecraftTree {
 				trunk.remove(i);
 			}
 		}
+	}
+	
+	public static boolean isLog(Block block) {
+	    if (block.getType() == Material.LOG)
+	        return true;
+	    if (block.getType() == Material.getMaterial("LOG_2"))
+            return true;
+	    if (block.getType() == Material.getMaterial("THAUMCRAFT_BLOCKMAGICALLOG"))
+	        return true;
+	    if (block.getType() == Material.getMaterial("IC2_BLOCKRUBWOOD"))
+            return true;
+        return false;
+	}
+	
+	public boolean isLeaves(Block block) {
+        if (block.getType() == Material.LEAVES)
+            return true;
+        if (block.getType() == Material.getMaterial("LEAVES_2"))
+            return true;
+        if (block.getType() == Material.getMaterial("THAUMCRAFT_BLOCKMAGICALLEAVES"))
+            return true;
+        if (block.getType() == Material.getMaterial("IC2_BLOCKRUBLEAVES"))
+            return true;
+        return false;
+    }
+	
+	public boolean isGround(Block block) {
+	    if (block.getType() == Material.DIRT) 
+	        return true;
+	    if (block.getType() == Material.GRASS)
+	        return true;
+	    return false;
 	}
 	
 }

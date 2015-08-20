@@ -20,7 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Plugin extends JavaPlugin {
 
 	public static String name = "Lumberjack";
-	public static LumberjackVersion version = null; 
+	//public static LumberjackVersion version = null; 
 	public static PluginManager manager = null;
 	public static String directory = null;
 	public static String configuration_filepath;

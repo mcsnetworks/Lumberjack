@@ -3,6 +3,7 @@ package nl.mightydev.lumberjack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Logger;
 
 import nl.mightydev.lumberjack.player_data.PlayerData;
 import nl.mightydev.lumberjack.util.LumberjackConfiguration;
@@ -30,7 +31,12 @@ public class OnPlayerHit implements Listener {
 	public void onBlockBreak(BlockBreakEvent event) {
 		if(event.isCancelled()) return;
 		
-		if(event instanceof LumberjackBlockBreakEvent) return;
+		Player p = event.getPlayer();
+        PlayerData d = PlayerData.get(p);
+		
+        if (p.getItemInHand().getTypeId()>1000) return; //Don't use lumberjack for custom items from Forge etc.
+        
+        if(event instanceof LumberjackBlockBreakEvent) return;
 
 		if(Plugin.manager.isPluginEnabled("mcMMO") && LumberjackConfiguration.mcMMOCheck()) {
 			try {
@@ -41,10 +47,7 @@ public class OnPlayerHit implements Listener {
 				PluginMessage.send("mcMMO's FakeBlockBreakEvent class not found, path might have been changed, contact Lumberjack author!");
 			}
 		}
-		
-		Player p = event.getPlayer();
-		PlayerData d = PlayerData.get(p);
-		
+								
 		if(p.getGameMode() == GameMode.SURVIVAL && d.enabled()) {
 			boolean cancel = doActions(p, d, event.getBlock());
 			event.setCancelled(cancel);
@@ -54,24 +57,26 @@ public class OnPlayerHit implements Listener {
 	private boolean doActions(Player p, PlayerData d, Block b) {
 
 		World world = b.getWorld();
-		
-		if(b.getType() != Material.LOG) return false;
-		
+
+		if(!MinecraftTree.isLog(b)) {		  
+		    return false;
+		}
+
 		MinecraftTree tree = d.lastTree();
+		
 		if(tree == null) {
 			tree = new MinecraftTree(b);
 			d.lastTree(tree);
-		}
-		else {
+		} else {
 			tree.refresh(world);
 			if(tree.isInTrunk(b) == false) {
 				tree = new MinecraftTree(b);
 				d.lastTree(tree);
 			}
 		}
-			
+
 		if(tree.isNatural() == false) return false;
-	
+
 		if (d.silent() == false) { 
 			String message;
 			switch(random.nextInt(100)) {
@@ -87,7 +92,7 @@ public class OnPlayerHit implements Listener {
 			}
 			if(message != null) Message.send(p, message);
 		}
-		
+
 		if(LumberjackConfiguration.breakFull()) {
 			Block highest;
 			while((highest = tree.removeTrunkTop()) != null) {
@@ -97,10 +102,8 @@ public class OnPlayerHit implements Listener {
 				fakeBlockBreak(highest, p);
 			}
 			return false; // don't cancel the event
-		}
-		else {
+		} else {
 			Block highest = tree.removeTrunkTop();
-			
 			// no more blocks in tree
 			if(highest == null) return false;
 			if(b.getLocation().equals(highest.getLocation())) {
@@ -108,27 +111,47 @@ public class OnPlayerHit implements Listener {
 			}
 			fakeBlockBreak(highest, p);
 		}
-		
 		return true; // cancel the breaking of the current block
 	}
 	
-	
 	private boolean fakeBlockBreak(Block block, Player player) {
-	 
+		final Logger log = Logger.getLogger("Minecraft");
 		BlockBreakEvent break_event = new LumberjackBlockBreakEvent(block, player);
 		Plugin.manager.callEvent(break_event);
+		
 		if(break_event.isCancelled()) return false;
 		
-		// reduce durability
-		ItemStack item_in_hand = player.getItemInHand();
-		short dur = (short) (item_in_hand.getDurability() + 1);
-		item_in_hand.setDurability((short) dur);
-		//Message.send(player, "new dur: " + dur); // TODO: remove need to break item when dur = ???
-
 		// artificial item drop
 	      Material material = block.getType();
 	      int amount = 1;
 	      byte data = block.getData();
+	      int type_id = block.getData() & 4;  
+	      System.out.println("Data: " + data + "DataAnd: " + type_id);
+	      if (block.getTypeId() == 17 && block.getData() == 4) //Oak Block with rotation
+	          data = 0;
+	      if (block.getTypeId() == 17 && block.getData() == 5) //Pine Block with rotation
+              data = 1;
+	      if (block.getTypeId() == 17 && block.getData() == 6) //Birch Block with rotation
+              data = 2;
+	      if (block.getTypeId() == 17 && block.getData() == 7) //Jungle Block with rotation
+              data = 3;
+	      if (block.getTypeId() == 17 && block.getData() == 8) //Oak Block with rotation
+              data = 0;
+	      if (block.getTypeId() == 17 && block.getData() == 9) //Pine Block with rotation
+              data = 1;
+	      if (block.getTypeId() == 17 && block.getData() == 10) //Birch Block with rotation
+              data = 2;
+	      if (block.getTypeId() == 17 && block.getData() == 11) //Jungle Block with rotation
+              data = 3;
+	      if (block.getTypeId() == 17 && block.getData() == 12) //Oak Block with rotation
+              data = 0;
+	      if (block.getTypeId() == 17 && block.getData() == 13) //Pine Block with rotation
+              data = 1;
+	      if (block.getTypeId() == 17 && block.getData() == 14) //Birth Block with rotation
+              data = 2;
+	      if (block.getTypeId() == 17 && block.getData() == 15) //Jungle Block with rotation
+              data = 3;
+	      
 	      short damage = 0;
 	      ItemStack drop = new ItemStack(material, amount, damage, data);
 	      block.getWorld().dropItemNaturally(block.getLocation(), drop);

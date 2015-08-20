@@ -16,7 +16,7 @@ class PlayerDataWriter {
 		try {
 			
 			FileWriter writer = new FileWriter(path, false);
-			writer.write("Lumberjack " + Plugin.version + " player settings\n");
+			writer.write("Lumberjack " + " player settings\n");
 			
 			for(Map.Entry<String,PlayerData> entry : map.entrySet()) {
 				write(writer, entry.getKey(), entry.getValue());
